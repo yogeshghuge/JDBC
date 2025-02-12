@@ -1,0 +1,209 @@
+package com.Dao;
+
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.model.Student;
+
+public class StudentDao {
+	public int insertStudent(Student s)
+	{
+		int check=0;
+		Connection con=null;
+		PreparedStatement pst=null;
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			con=DriverManager.getConnection("jdbc:mysql://localhost:3306/student", "root",null);
+			String sql="insert into Student(id,name,email,department)values(?,?,?,?)";
+			pst=con.prepareStatement(sql);
+			pst.setInt(1, s.getId());
+			pst.setString(2,s.getName());
+			pst.setString(3, s.getEmail());
+			pst.setString(3, s.getDepartment());
+			check=pst.executeUpdate();
+			
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally
+		{
+			try {
+				pst.close();
+				con.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+		}
+		
+		
+		return check;
+	}
+	//delete Student
+	public int deleteStudentById(int Id)
+	{
+		int check=0;
+		Connection con=null;
+		PreparedStatement pst=null;
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			con=DriverManager.getConnection("jdbc:mysql://localhost:3306/student","root", null);
+			String sql="delete from Student where Id=?";
+			pst=con.prepareStatement(sql);
+			pst.setInt(1, Id);
+			check=pst.executeUpdate();
+			
+		} catch (ClassNotFoundException e) {
+			
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally
+		{
+			try {
+				pst.close();
+				con.close();
+			} catch (SQLException e) {
+				
+				e.printStackTrace();
+			}
+			
+		}
+		return check;
+	}
+	public Student findStudentById(int id)
+	{
+		Student s=null;
+		Connection con=null;
+		PreparedStatement pst=null;
+		ResultSet rs=null;
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			con=DriverManager.getConnection("jdbc:mysql://localhost:3306/student", "root", null);
+			String sql="select name=?,depertment?,email=? from Student where id=?";
+			pst=con.prepareStatement(sql);
+			rs=pst.executeQuery();
+			while(rs.next())
+			{
+				s=new Student();
+				s.setId((int)rs.getObject("id"));
+				s.setName((String)rs.getObject("name"));
+				s.setEmail((String)rs.getObject("email"));
+				s.setDepartment((String)rs.getObject("department"));
+				
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally
+		{
+			try {
+				rs.close();
+				pst.close();
+				con.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		
+		return s;
+		
+	}
+	public int updateStudent(Student s)
+	{
+		int check=0;
+		Connection con=null;
+		PreparedStatement pst=null;
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			con=DriverManager.getConnection("jdbc:mysql://localhost:3306/student","root", null);
+			String sql="update Student set name=?,email=?,department=? where Id=?";
+			pst=con.prepareStatement(sql);
+			pst.setString(1, s.getName());
+			pst.setString(2, s.getEmail());
+			pst.setString(3, s.getDepartment());
+			check=pst.executeUpdate();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally
+		{
+			try {
+				pst.close();
+				con.close();
+			} catch (SQLException e) {
+				
+				e.printStackTrace();
+			}
+			
+		}
+		
+		return check;
+		
+	}
+	//findAllStudent
+	public List<Student> findAllStudentById(int Id)
+	{
+		List<Student> list=new ArrayList<>();
+		Connection con=null;
+		PreparedStatement pst=null;
+		ResultSet rs=null;
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			con=DriverManager.getConnection("jdbc:mysql://localhost:3306/student", "root", null);
+			String sql="select name=?,depertment?,email=? from Student";
+			pst=con.prepareStatement(sql);
+			rs=pst.executeQuery();
+			while(rs.next())
+			{
+				Student s=new Student();
+				s.setId((int)rs.getObject("id"));
+				s.setName((String)rs.getObject("name"));
+				s.setEmail((String)rs.getObject("email"));
+				s.setDepartment((String)rs.getObject("department"));
+				list.add(s);
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		finally
+		{
+			try {
+				rs.close();
+				pst.close();
+				con.close();
+			} catch (SQLException e) {			
+				e.printStackTrace();
+			}
+			
+		}
+		
+		return list;
+	}
+
+}
+
+
